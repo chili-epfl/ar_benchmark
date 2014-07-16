@@ -1,0 +1,12 @@
+Markers sheet creation:
+
+- download http://studierstube.icg.tugraz.at/handheld_ar/download/ARToolKitPlus_2.1.1.zip
+
+- enlarge BCH markers in id-markers/bch
+
+$ for i in $(seq -w 0 1023); do convert BchThin_$i.png -scale 5000% marker_$i.png; done
+
+Then, benchmark sheets generated from benckmark-easy.svg (after adaptation of file names) with Inkscape:
+
+$ for i in 160 320 640 800 1280; do inkscape --export-png artoolkit-benchmark-easy-$i.png --export-width=$i benchmark-easy.svg; done
+

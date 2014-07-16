@@ -52,6 +52,70 @@ DetectionResults alvar_detection(const string& path) {
 
 }
 
+
+/*********************************************
+            ARToolkitPlus INVOKATION
+*********************************************/
+/*
+#include <ARToolKitPlus/TrackerMultiMarkerImpl.h>
+DetectionResults artoolkitplus_detection(const string& path) {
+
+    cv::Mat image = cv::imread(path);
+
+    // ARToolkitPlus initialization
+    
+    // create a tracker that does:
+    //  - 6x6 sized marker images
+    //  - samples at a maximum of 6x6
+    //  - works with luminance (gray) images
+    //  - can load a maximum of 1023 pattern
+    //  - can detect a maximum of 1023 patterns in one image
+    ARToolKitPlus::TrackerMultiMarker *tracker = new ARToolKitPlus::TrackerMultiMarkerImpl<6,6,6, 1023, 1023>(width,height);
+
+    tracker->setPixelFormat(ARToolKitPlus::PIXEL_FORMAT_BGR);
+
+    // the marker in the BCH test image has a thiner border...
+    tracker->setBorderWidth(0.125f);
+    tracker->activateAutoThreshold(true);
+
+    tracker->setMarkerMode(ARToolKitPlus::MARKER_ID_SIMPLE);
+
+
+    
+    //const ARToolKitPlus::ARMultiMarkerInfoT *artkpConfig = tracker->getMultiMarkerConfig();
+    //printf("%d markers defined in multi marker cfg\n", artkpConfig->marker_num);
+
+    //printf("marker matrices:\n");
+    //for(int multiMarkerCounter = 0; multiMarkerCounter < artkpConfig->marker_num; multiMarkerCounter++)
+    //{
+    //    printf("marker %d, id %d:\n", multiMarkerCounter, artkpConfig->marker[multiMarkerCounter].patt_id);
+    //    for(int row = 0; row < 3; row++)
+    //    {
+    //        for(int column = 0; column < 4; column++)
+    //            printf("%.2f  ", artkpConfig->marker[multiMarkerCounter].trans[row][column]);
+    //        printf("\n");
+    //    }
+    //}
+
+    vector<double> durations;
+
+    int numDetected;
+    for (int i = 0; i < ITERATIONS; i++) {
+        int64 startCount = cv::getTickCount();
+        numDetected = tracker->calc(image.data);
+        int64 endCount = cv::getTickCount();
+        durations.push_back(((double) endCount - startCount)*1000/cv::getTickFrequency());
+    }
+    cout << "Detected " << numDetected << " markers with ARToolkit." << endl;
+
+    set<int> foundIds;
+
+    //for (const auto &tag : *alvar.markers) foundIds.insert(tag.GetId());
+
+    return make_pair(durations, foundIds);
+}
+*/
+
 /*********************************************
               ARUCO INVOKATION
 *********************************************/
@@ -184,6 +248,8 @@ int main() {
     // ALVAR
     run_detection("alvar", "default", *alvar_detection);
 
+    // ARToolkitPlus
+    //run_detection("artoolkitplus", "default", *artoolkitplus_detection);
 
     // ARUCO
     run_detection("aruco", "default", *aruco_detection);
