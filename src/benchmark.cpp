@@ -150,7 +150,7 @@ void run_detection(string name, string desc, function<DetectionResults(const str
     path += name + "/"+ name + "-benchmark-easy-800.png";
     auto res = detector(path);
 
-    cout << "| " << name << " (" << desc << ") | "
+    cout << "| `" << name << "` (" << desc << ") | "
          << mean(res.first)
         << " | " 
         << std::setw(10) << std::fixed << std::setprecision(1) << sigma(res.first)
@@ -182,17 +182,17 @@ int main() {
     cout << "|-------|-----------------------------:|--------------:|----------------|" << endl;
 
     // ALVAR
-    run_detection("alvar", "default mode", *alvar_detection);
+    run_detection("alvar", "default", *alvar_detection);
 
 
     // ARUCO
-    run_detection("aruco", "default mode", *aruco_detection);
+    run_detection("aruco", "default", *aruco_detection);
 
 
     // CHILITAGS
-    run_detection("chilitags", "robust mode", bind(chilitags_detection, _1, chilitags::Chilitags::ROBUST));
-    run_detection("chilitags", "fast mode", bind(chilitags_detection, _1, chilitags::Chilitags::FAST));
-    run_detection("chilitags", "faster mode", bind(chilitags_detection, _1, chilitags::Chilitags::FASTER));
+    run_detection("chilitags", "`ROBUST` preset", bind(chilitags_detection, _1, chilitags::Chilitags::ROBUST));
+    run_detection("chilitags", "`FAST` preset", bind(chilitags_detection, _1, chilitags::Chilitags::FAST));
+    run_detection("chilitags", "`FASTER` preset", bind(chilitags_detection, _1, chilitags::Chilitags::FASTER));
 
     return 0;
 }

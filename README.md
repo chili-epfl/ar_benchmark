@@ -43,11 +43,11 @@ Detection speed results
 
 |Library| Average processing time (ms) | Std deviation | Missed markers |
 |-------|-----------------------------:|--------------:|----------------|
-| alvar (default mode) | 10.1687 |        0.6 | 672,  |
-| aruco (default mode) | 8.3 |        1.7 | 272,  |
-| chilitags (robust mode) | 44.9 |        1.2 |  |
-| chilitags (fast mode) | 20.8 |        0.8 |  |
-| chilitags (faster mode) | 10.7 |        0.8 |  |
+| `alvar` (default) | 10.1687 |        0.6 | 672,  |
+| `aruco` (default) | 8.3 |        1.7 | 272,  |
+| `chilitags` (`ROBUST` preset) | 44.9 |        1.2 |  |
+| `chilitags` (`FAST` preset) | 20.8 |        0.8 |  |
+| `chilitags` (`FASTER` preset) | 10.7 |        0.8 |  |
 
 
 Next steps
@@ -56,3 +56,5 @@ Next steps
 - Include ARToolkit
 - test at different resolutions
 - use non-synthetic datasets
+- benchmark robustness
+
