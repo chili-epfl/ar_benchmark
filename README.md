@@ -4,6 +4,8 @@ Benchmarking 2D marker tracking libraries
 This project aims at providing a rigorous framework to benchmark
 the main open-source libraries for 2D marker detection and tracking.
 
+![](data/chilitags/chilitags-benchmark-easy-320.png)
+
 The contenders we have considered so far are:
 
 - [ALVAR](http://virtual.vtt.fi/virtual/proj2/multimedia/alvar/) (LGPL 2.1)
@@ -24,12 +26,10 @@ standards, etc), community...
 This benchmark currently only focuses on a single performance metric: detection
 speed of markers in a static image.
 
-We rely on a common layout of markers (pictured below), with markers adapted to
+We rely on a common layout of markers (pictured above), with markers adapted to
 each libraries, then precisely time to **detection** duration (ie, without the
 time to load the image or display the results), and finally average the result
 on 20 runs.
-
-![](data/chilitags/benchmark-chilitags-easy.png =300x)
 
 The base image has a resolution of 800x1131 pixels (A4 at ~96dpi).
 
