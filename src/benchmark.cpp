@@ -16,6 +16,7 @@ const set<int> EASY_IDS = {0, 36, 190, 462, 38, 1018, 272, 50, 672, 865, 345, 99
 
 const set<int> TRICKY_IDS = {0, 36, 190, 462, 78, 38, 1018, 272, 50, 672, 865, 345, 912, 995, 90, 532, 903, 782, 461, 80, 454, 73, 291, 124};
 
+
 // the vector of double contains detection durations for each run,
 // the set of int contains the detected tags
 typedef pair<vector<double>, set<int>> DetectionResults;
@@ -143,34 +144,27 @@ double sigma(const vector<double>& vals)
 }
 
 
-void check_marker_set(const set<int>& foundIds, const set<int>& reference) {
+void run_detection(string name, string desc, function<DetectionResults(const string&)> detector, const set<int>& reference = EASY_IDS) {
 
+    string path = "data/";
+    path += name + "/"+ name + "-benchmark-easy-800.png";
+    auto res = detector(path);
+
+    cout << "| " << name << " (" << desc << ") | "
+         << mean(res.first)
+        << " | " 
+        << std::setw(10) << std::fixed << std::setprecision(1) << sigma(res.first)
+        << " | ";
 
         set<int> result;
         set_difference(reference.begin(), reference.end(), 
-                        foundIds.begin(), foundIds.end(), 
-                        std::inserter(result, result.end()));
+                       res.second.begin(), res.second.end(), 
+                       std::inserter(result, result.end()));
+
         if (!result.empty()) {
-            cout << "Some markers were not detected! ";
             copy(result.begin(), result.end(), ostream_iterator<int>(cout, ", "));
-            cout << "\n";
         }
-}
-
-void run_detection(string name, string desc, function<DetectionResults(const string&)> detector) {
-    cout << "*** Testing " << name << " (" << desc << ") ***" << endl;
-
-    string path = "data/";
-    path += name + "/benchmark-"+ name + "-easy.png";
-    auto res = detector(path);
-
-    check_marker_set(res.second, EASY_IDS);
-    cout << "Processing times (ms) results (" << ITERATIONS << " runs):\n";
-    cout << "chilitags-easy"
-         << std::setw(10) << std::fixed << std::setprecision(1) << mean(res.first)
-        << "ms (sd: " 
-        << std::setw(10) << std::fixed << std::setprecision(1) << sigma(res.first)
-        << "ms)\n";
+        cout << " |" << endl;
 }
 
 
@@ -183,6 +177,9 @@ Add here call to different detectors
 
 int main() {
     using namespace std::placeholders; // for _1, _2...
+
+    cout << "|Library| Average processing time (ms) | Std deviation | Missed markers |" << endl;
+    cout << "|-------|-----------------------------:|--------------:|----------------|" << endl;
 
     // ALVAR
     run_detection("alvar", "default mode", *alvar_detection);
