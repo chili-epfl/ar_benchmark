@@ -1,4 +1,5 @@
 #include <opencv2/highgui/highgui.hpp>
+#include <boost/program_options.hpp>
 #include <iostream>
 #include <iomanip> // setw...
 #include <iterator>
@@ -9,6 +10,8 @@
 #include <algorithm>
 
 using namespace std;
+using namespace std::placeholders; // for _1, _2...
+namespace po = boost::program_options;
 
 const int ITERATIONS = 10;
 
@@ -208,19 +211,22 @@ double sigma(const vector<double>& vals)
 }
 
 
-void run_detection(string name, string desc, 
+DetectionResults run_detection(string name, 
                    function<DetectionResults(const string&)> detector, 
-                   int resolution = 800, 
-                   const set<int>& reference = EASY_IDS) {
+                   int resolution = 800) {
 
     string path = "data/";
     path += name + "/"+ name + "-benchmark-easy-" + to_string(resolution) + ".png";
-    auto res = detector(path);
+    return detector(path);
+}
+
+void print_md(const string& name, const DetectionResults& res, const string& desc = "default", 
+                   const set<int>& reference = EASY_IDS) {
 
     cout << "| `" << name << "` (" << desc << ") | "
-         << mean(res.first)
+        << mean(res.first)
         << " | " 
-        << std::setw(10) << std::fixed << std::setprecision(1) << sigma(res.first)
+        << sigma(res.first)
         << " | ";
 
         set<int> result;
@@ -235,6 +241,24 @@ void run_detection(string name, string desc,
 }
 
 
+void print_csv(const string& name, const vector<DetectionResults>& all_res, 
+                   const set<int>& reference = EASY_IDS) {
+
+    cout << name << ", ";
+    
+    for (auto res : all_res) {
+        cout << mean(res.first) << ", " << sigma(res.first) << ", ";
+
+        set<int> result;
+        set_difference(reference.begin(), reference.end(), 
+                       res.second.begin(), res.second.end(), 
+                       std::inserter(result, result.end()));
+
+        cout << result.size() << ", ";
+    }
+    cout << endl;
+}
+
 
 /*********************************************
              MAIN
@@ -242,29 +266,91 @@ void run_detection(string name, string desc,
 Add here call to different detectors
 *********************************************/
 
-int main() {
-    using namespace std::placeholders; // for _1, _2...
+int main(int ac, char** av) {
+
+    bool csv = true;
+    cout << std::setw(10) << std::fixed << std::setprecision(1);
+
+    // Declare the supported options.
+    po::options_description desc("Options");
+    desc.add_options()
+        ("help,h", "produce help message")
+        ("markdown,md", "output benchmarks results in Markdown format")
+        ("csv", "output benchmarks results as comma separated values (default)")
+    ;
+
+    po::variables_map vm;
+    po::store(po::parse_command_line(ac, av, desc), vm);
+    po::notify(vm); 
+
+    if (vm.count("help")) {
+        cout << desc << "\n";
+        return 1;
+    }
+
+    if (vm.count("markdown")) csv = false;
+
+    map<string, vector<DetectionResults>> results;
+
+    cerr << "Starting now..." << endl;
 
     for(auto res : RESOLUTIONS) {
-
-        cout << "\n### Resolution " << res << "x" << (int) (res * 1.414) << "\n" << endl;
-        cout << "|Library| Average processing time (ms) | Std deviation | Missed markers |" << endl;
-        cout << "|-------|-----------------------------:|--------------:|----------------|" << endl;
+        cerr << "\nResolution: " << res << "px." << endl;
 
         // ALVAR
-        run_detection("alvar", "default", *alvar_detection, res);
+        cerr << "alvar...";
+        auto alvar = run_detection("alvar", *alvar_detection, res);
+        results["alvar"].push_back(alvar);
 
         // ARToolkitPlus
-        run_detection("artoolkitplus", "default", *artoolkitplus_detection, res);
+        cerr << "artoolkitplus...";
+        auto artoolkit = run_detection("artoolkitplus", *artoolkitplus_detection, res);
+        results["artoolkitplus"].push_back(artoolkit);
 
         // ARUCO
-        run_detection("aruco", "default", *aruco_detection, res);
+        cerr << "aruco...";
+        auto aruco = run_detection("aruco", *aruco_detection, res);
+        results["aruco"].push_back(aruco);
 
         // CHILITAGS
-        run_detection("chilitags", "`ROBUST` preset", bind(chilitags_detection, _1, chilitags::Chilitags::ROBUST), res);
-        run_detection("chilitags", "`FAST` preset", bind(chilitags_detection, _1, chilitags::Chilitags::FAST), res);
-        run_detection("chilitags", "`FASTER` preset", bind(chilitags_detection, _1, chilitags::Chilitags::FASTER), res);
+        cerr << "chilitags...";
+        auto chilitags_robust = run_detection("chilitags", bind(chilitags_detection, _1, chilitags::Chilitags::ROBUST), res);
+        results["chilitags_robust"].push_back(chilitags_robust);
+        auto chilitags_fast = run_detection("chilitags", bind(chilitags_detection, _1, chilitags::Chilitags::FAST), res);
+        results["chilitags_fast"].push_back(chilitags_fast);
+        auto chilitags_faster = run_detection("chilitags", bind(chilitags_detection, _1, chilitags::Chilitags::FASTER), res);
+        results["chilitags_faster"].push_back(chilitags_faster);
 
+        cerr << endl;
+
+        // Markdown output
+        if (!csv) {
+            cout << "\n### Resolution " << res << "x" << (int) (res * 1.414) << "\n" << endl;
+            cout << "|Library| Average (ms) | σ | Missed markers |" << endl;
+            cout << "|-------|-------------:|--:|----------------|" << endl;
+            print_md("alvar", alvar);
+            print_md("artoolkitplus", artoolkit);
+            print_md("aruco", aruco);
+            print_md("chilitags", chilitags_robust, "`ROBUST` preset");
+            print_md("chilitags", chilitags_fast, "`FAST` preset");
+            print_md("chilitags", chilitags_faster, "`FASTER` preset");
+        }
     }
+
+    // CSV output
+    if (csv) {
+
+        cout << endl << "name, ";
+        for (auto res : RESOLUTIONS) {
+            cout << res << "px, σ " << res << "px, misses " << res <<"px, ";
+        }
+        cout << endl;
+
+        for (auto& kv : results) {
+            print_csv(kv.first, kv.second);
+        }
+    }
+
+
     return 0;
 }

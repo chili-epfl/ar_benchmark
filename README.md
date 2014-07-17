@@ -46,7 +46,7 @@ Detection speed results
 
 ### Resolution 160x226
 
-|Library| Average processing time (ms) | Std deviation | Missed markers |
+|Library| Average (ms) | σ | Missed markers |
 |-------|-----------------------------:|--------------:|----------------|
 | `alvar` (default) | 2.78548 |        0.5 | 73, 90, 124, 272, 672, 782, 865, 1018,  |
 | `artoolkitplus` (default) | 1.5 |        0.1 | 0, 38, 73, 90, 124, 272, 865,  |
@@ -57,7 +57,7 @@ Detection speed results
 
 ### Resolution 320x452
 
-|Library| Average processing time (ms) | Std deviation | Missed markers |
+|Library| Average (ms) | σ | Missed markers |
 |-------|-----------------------------:|--------------:|----------------|
 | `alvar` (default) | 4.8 |        0.4 | 272, 672,  |
 | `artoolkitplus` (default) | 2.5 |        0.2 |  |
@@ -68,7 +68,7 @@ Detection speed results
 
 ### Resolution 640x904
 
-|Library| Average processing time (ms) | Std deviation | Missed markers |
+|Library| Average (ms) | σ | Missed markers |
 |-------|-----------------------------:|--------------:|----------------|
 | `alvar` (default) | 7.9 |        0.4 | 672,  |
 | `artoolkitplus` (default) | 6.1 |        0.2 |  |
@@ -79,7 +79,7 @@ Detection speed results
 
 ### Resolution 800x1131
 
-|Library| Average processing time (ms) | Std deviation | Missed markers |
+|Library| Average (ms) | σ | Missed markers |
 |-------|-----------------------------:|--------------:|----------------|
 | `alvar` (default) | 10.2 |        0.5 | 672,  |
 | `artoolkitplus` (default) | 8.9 |        0.3 |  |
@@ -90,7 +90,7 @@ Detection speed results
 
 ### Resolution 1280x1809
 
-|Library| Average processing time (ms) | Std deviation | Missed markers |
+|Library| Average (ms) | σ | Missed markers |
 |-------|-----------------------------:|--------------:|----------------|
 | `alvar` (default) | 22.0 |        0.5 | 672,  |
 | `artoolkitplus` (default) | 20.4 |        0.2 | 36,  |

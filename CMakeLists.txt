@@ -6,6 +6,7 @@ add_definitions(-std=c++11)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
 
 ## System dependencies
+find_package(Boost REQUIRED program_options)
 find_package(OpenCV REQUIRED)
 find_package(PkgConfig)
 
@@ -15,6 +16,7 @@ find_package(aruco REQUIRED)
 pkg_search_module(CHILITAGS REQUIRED chilitags)
 
 include_directories(include 
+                    ${Boost_INCLUDE_DIRS} 
                     ${OpenCV_INCLUDE_DIRS} 
                     ${ALVAR_INCLUDE_DIRS} 
                     ${ARTOOLKITPLUS_INCLUDE_DIR} 
@@ -23,6 +25,7 @@ include_directories(include
 
 add_executable(benchmark src/benchmark.cpp)
 target_link_libraries(benchmark 
+                        ${Boost_LIBRARIES} 
                         ${OpenCV_LIBRARIES} 
                         ${ALVAR_LIBRARIES}
                         ${ARTOOLKITPLUS_LIBRARIES} 
