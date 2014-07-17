@@ -16,6 +16,7 @@ const set<int> EASY_IDS = {0, 36, 190, 462, 38, 1018, 272, 50, 672, 865, 345, 99
 
 const set<int> TRICKY_IDS = {0, 36, 190, 462, 78, 38, 1018, 272, 50, 672, 865, 345, 912, 995, 90, 532, 903, 782, 461, 80, 454, 73, 291, 124};
 
+const vector<int> RESOLUTIONS = {160, 320, 640, 800, 1280};
 
 // the vector of double contains detection durations for each run,
 // the set of int contains the detected tags
@@ -207,10 +208,13 @@ double sigma(const vector<double>& vals)
 }
 
 
-void run_detection(string name, string desc, function<DetectionResults(const string&)> detector, const set<int>& reference = EASY_IDS) {
+void run_detection(string name, string desc, 
+                   function<DetectionResults(const string&)> detector, 
+                   int resolution = 800, 
+                   const set<int>& reference = EASY_IDS) {
 
     string path = "data/";
-    path += name + "/"+ name + "-benchmark-easy-800.png";
+    path += name + "/"+ name + "-benchmark-easy-" + to_string(resolution) + ".png";
     auto res = detector(path);
 
     cout << "| `" << name << "` (" << desc << ") | "
@@ -241,23 +245,26 @@ Add here call to different detectors
 int main() {
     using namespace std::placeholders; // for _1, _2...
 
-    cout << "|Library| Average processing time (ms) | Std deviation | Missed markers |" << endl;
-    cout << "|-------|-----------------------------:|--------------:|----------------|" << endl;
+    for(auto res : RESOLUTIONS) {
 
-    // ALVAR
-    run_detection("alvar", "default", *alvar_detection);
+        cout << "\n### Resolution " << res << "x" << (int) (res * 1.414) << "\n" << endl;
+        cout << "|Library| Average processing time (ms) | Std deviation | Missed markers |" << endl;
+        cout << "|-------|-----------------------------:|--------------:|----------------|" << endl;
 
-    // ARToolkitPlus
-    run_detection("artoolkitplus", "default", *artoolkitplus_detection);
+        // ALVAR
+        run_detection("alvar", "default", *alvar_detection, res);
 
-    // ARUCO
-    run_detection("aruco", "default", *aruco_detection);
+        // ARToolkitPlus
+        run_detection("artoolkitplus", "default", *artoolkitplus_detection, res);
 
+        // ARUCO
+        run_detection("aruco", "default", *aruco_detection, res);
 
-    // CHILITAGS
-    run_detection("chilitags", "`ROBUST` preset", bind(chilitags_detection, _1, chilitags::Chilitags::ROBUST));
-    run_detection("chilitags", "`FAST` preset", bind(chilitags_detection, _1, chilitags::Chilitags::FAST));
-    run_detection("chilitags", "`FASTER` preset", bind(chilitags_detection, _1, chilitags::Chilitags::FASTER));
+        // CHILITAGS
+        run_detection("chilitags", "`ROBUST` preset", bind(chilitags_detection, _1, chilitags::Chilitags::ROBUST), res);
+        run_detection("chilitags", "`FAST` preset", bind(chilitags_detection, _1, chilitags::Chilitags::FAST), res);
+        run_detection("chilitags", "`FASTER` preset", bind(chilitags_detection, _1, chilitags::Chilitags::FASTER), res);
 
+    }
     return 0;
 }
