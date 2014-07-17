@@ -8,13 +8,15 @@ the main open-source libraries for 2D marker detection and tracking.
 
 The contenders we have considered so far are:
 
-- [ALVAR](http://virtual.vtt.fi/virtual/proj2/multimedia/alvar/) (LGPL 2.1)
-- [Aruco](http://www.uco.es/investiga/grupos/ava/node/26) (BSD)
-- [chilitags](http://chili.epfl.ch/software) (LGPL 3) **[disclaimer: we are the
+- [ALVAR](http://virtual.vtt.fi/virtual/proj2/multimedia/alvar/) 2.0.0 (LGPL 2.1)
+- [ARToolkitPlus](http://studierstube.icg.tu-graz.ac.at/handheld_ar/artoolkitplus.php) 2.1.1 (GPL)
+- [Aruco](http://www.uco.es/investiga/grupos/ava/node/26) 1.2.5 (BSD)
+- [chilitags](http://chili.epfl.ch/software) 2.0.0 (LGPL 3) **[disclaimer: we are the
   authors of chilitags!]**
 
-We plan to add soon [ARToolkit](http://artoolkit.sourceforge.net/) (but this
-library is older, and more difficult to integrate).
+(note that ARToolKitPlus is painful to compile and install. We relied on
+[`robotpkg`](http://robotpkg.openrobots.org/robotpkg/image/artoolkitplus/index.html)
+for that).
 
 Methodology
 -----------
@@ -43,17 +45,17 @@ Detection speed results
 
 |Library| Average processing time (ms) | Std deviation | Missed markers |
 |-------|-----------------------------:|--------------:|----------------|
-| `alvar` (default) | 10.1687 |        0.6 | 672,  |
-| `aruco` (default) | 8.3 |        1.7 | 272,  |
-| `chilitags` (`ROBUST` preset) | 44.9 |        1.2 |  |
-| `chilitags` (`FAST` preset) | 20.8 |        0.8 |  |
-| `chilitags` (`FASTER` preset) | 10.7 |        0.8 |  |
+| `alvar` (default) | 10.2186 |        0.7 | 672,  |
+| `artoolkitplus` (default) | 8.9 |        0.2 |  |
+| `aruco` (default) | 8.7 |        2.4 | 272,  |
+| `chilitags` (`ROBUST` preset) | 44.5 |        0.6 |  |
+| `chilitags` (`FAST` preset) | 20.7 |        0.4 |  |
+| `chilitags` (`FASTER` preset) | 10.2 |        0.3 |  |
 
 
 Next steps
 ----------
 
-- Include ARToolkit
 - test at different resolutions
 - use non-synthetic datasets
 - benchmark robustness
