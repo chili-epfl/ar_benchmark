@@ -1,6 +1,0 @@
-Markers created with:
-
-
-$ for i in {0..1023}; do ./samplemarkercreator $i; done
-
-Then, benchmark sheets generated from benckmark-{easy|trick}.svg with Inkscape.

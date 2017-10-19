@@ -1,8 +1,0 @@
-Markers created with:
-
-$ for i in {0..1023}; do ./aruco_create_marker $i marker_$i.jpg 1000; done
-
-Then, benchmark sheets generated from benckmark-easytrick.svg with Inkscape:
-
-$ for i in 160 320 640 800 1280; do inkscape --export-png aruco-benchmark-easy-$i.png --export-width=$i benchmark-easy.svg; done
-
